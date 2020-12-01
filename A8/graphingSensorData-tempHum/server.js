@@ -24,7 +24,7 @@ app.get("/sendEmail", function (req, res) {
    // Send Email
    var t = req.query.t
    var h = req.query.h
-   const mailOptions = {
+   var mailOptions = {
      from: '',
      to: '',
      subject: 'test',

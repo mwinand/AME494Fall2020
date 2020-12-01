@@ -13,6 +13,8 @@ const char* password = "wolfenberg";
 //Your Domain name with URL path or IP address with path
 const char* serverName = "http://3.137.140.14:1234/sendData";
 
+String response;
+
 // for DHT11,
 //      VCC: 5V or 3V
 //      GND: GND
@@ -49,30 +51,32 @@ String httpGETRequest(const char* serverName) {
 
 void pressed()
 {
-    uint16_t color = random(0xFFFF);
-    ttgo->tft->fillScreen(color);
-    ttgo->tft->setTextColor(color, TFT_WHITE);
-    ttgo->tft->drawString("User Button pressed",  5, 100, 4);
+
+    byte temperature = 0;
+    byte humidity = 0;
+    int err = SimpleDHTErrSuccess;
+    if ((err = dht11.read(&temperature, &humidity, NULL)) != SimpleDHTErrSuccess) {
+       Serial.print("Read DHT11 failed, err="); Serial.println(err); delay(1000);
+       return;
+     }
+  
+     Serial.print("Sample OK: ");
+     Serial.print(String((float)temperature) + "* C, ");
+     Serial.println(String((float)humidity) + "% H");
+
+      ttgo->tft->drawString(String((int)temperature*1.8 + 32) + " *F",  5, 10);
+      ttgo->tft->drawString(String(humidity) + " % H",  5, 40);
+
+      int t = (int)temperature;
+      int h = (int)humidity;
+      String url = String(serverName) + "?t=" + t + "&h=" + h;
+      Serial.println(url);       
+      response = httpGETRequest(url.c_str());
+      Serial.println(response);
 
     if(WiFi.status()== WL_CONNECTED){
 
-      byte temperature = 0;
-      byte humidity = 0;
-      
-      int err = SimpleDHTErrSuccess;
-      if ((err = dht11.read(&temperature, &humidity, NULL)) != SimpleDHTErrSuccess) {
-        Serial.print("Read DHT11 failed, err="); Serial.println(err); delay(1000);
-        return;
-      }
-  
-      Serial.print("Sample OK: ");
-      Serial.print(String((float)temperature) + "* C, ");
-      Serial.println(String((float)humidity) + "% H");
-
-      int t = (int)temperature;
-      int h = (int)humidity;   
       Serial.println(response);
-      response = httpGETRequest(serverName + "?t=" + t + "&h=" + h);
       
     }
     else {
