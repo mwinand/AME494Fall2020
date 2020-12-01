@@ -11,7 +11,7 @@ const char* ssid = "winand";
 const char* password = "wolfenberg";
 
 //Your Domain name with URL path or IP address with path
-const char* serverName = "http://3.137.140.14:1234/sendData";
+const char* serverName = "http://18.224.22.27:1234/sendEmail";
 
 String response;
 
@@ -110,10 +110,6 @@ void setup() {
   Serial.println("");
   Serial.print("Connected to WiFi network with IP Address: ");
   Serial.println(WiFi.localIP());
- 
-  Serial.println("Timer set to 5 seconds (timerDelay variable), it will take 5 seconds before publishing the first reading.");
-
-
 
 }
 
